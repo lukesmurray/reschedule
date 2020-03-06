@@ -11,6 +11,8 @@ from googleapiclient.discovery import build
 from .config import (
     SCOPES,
     task_calendar_name,
+    developer_key,
+    config_directory
 )
 from .models import (
     CalendarResource,
@@ -36,6 +38,11 @@ def local_file_path(filename):
         os.path.join(os.path.dirname(os.path.realpath(__file__)), filename)
     )
 
+def config_file_path(filename):
+    return os.path.abspath(
+        os.path.join(str(config_directory), filename)
+    )
+
 
 def get_google_api_credentials():
     """Get credentials for accessing the google api."""
@@ -43,8 +50,9 @@ def get_google_api_credentials():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists(local_file_path("token.pickle")):
-        with open(local_file_path("token.pickle"), "rb") as token:
+    pickle_path = config_file_path('token.pickle')
+    if os.path.exists(pickle_path):
+        with open(pickle_path, "rb") as token:
             credentials = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not credentials or not credentials.valid:
@@ -56,7 +64,7 @@ def get_google_api_credentials():
             )
             credentials = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open(local_file_path("token.pickle"), "wb") as token:
+        with open(pickle_path, "wb") as token:
             pickle.dump(credentials, token)
     return credentials
 
@@ -65,7 +73,7 @@ class CalendarAPI(object):
     def __init__(self):
         super().__init__()
         # service used to access google calendar api
-        self.service = build("calendar", "v3", credentials=get_google_api_credentials())
+        self.service = build("calendar", "v3", credentials=get_google_api_credentials(), developerKey=developer_key)
         self._task_cal = None
         self._list_cals = None
 
@@ -225,8 +233,7 @@ class CalendarAPI(object):
                 body=event_body,
             ).execute()
         else:
-            self.service.events().patch(
+            self.service.events().insert(
                 calendarId=self.get_task_calendar()["id"],
-                eventId=event_id,
                 body=event_body,
             ).execute()

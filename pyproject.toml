@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "reschedule"
-version = "0.1.0"
+version = "0.1.1"
 description = "Parser and scheduler for syncing a markdown(ish) todo list with google calendar."
 authors = ["Luke Murray <lukepigeonmail@gmail.com>"]
 license = "MIT"
@@ -10,7 +10,6 @@ classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Environment :: Console",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -23,11 +22,12 @@ exclude = ["assets/*"]
 reschedule = 'reschedule.console:run'
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.6"
 google-auth-oauthlib = "^0.4.1"
 google-api-python-client = "^1.7.11"
 python-dateutil = "^2.8.1"
 typing-extensions = "^3.7.4"
+tqdm = "^4.43.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

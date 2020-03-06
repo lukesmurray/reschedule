@@ -4,6 +4,8 @@ from datetime import datetime
 
 from .models import ParserContext, Task, TaskStatus
 
+from .config import default_est
+
 
 def _get_status_from_char(char: str) -> TaskStatus:
     """Convert the character in the [ ] for a task into a TaskStatus
@@ -134,7 +136,7 @@ class TaskParser(object):
         new_task.date = self.date_context
 
         # parse the estimate tag
-        est = tag_dict.get("est", "30m")
+        est = tag_dict.get("est", default_est)
         est_regex = r"(\d+)(\w+)"
         est_in_minutes = 30
         est_match = re.fullmatch(est_regex, est)

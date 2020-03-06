@@ -1,6 +1,7 @@
 import math
 import sys
 import typing as t
+from tqdm import tqdm
 
 from .calendar_api import CalendarAPI
 from .config import chunk_size
@@ -70,6 +71,7 @@ def schedule_tasks(parse_tasks: t.List[Task]):
     day_offset = 0
     busy_array = cal_api.get_busy_array_for_day(day_offset)
 
+    t = tqdm(total=len(sorted_task_dict), unit="events")
     while len(sorted_task_dict):
         try:
             # get the first possible free time
@@ -112,6 +114,7 @@ def schedule_tasks(parse_tasks: t.List[Task]):
             )
             # remove task from sorted task dict
             sorted_task_dict.pop(fitting_task.id)
+            t.update(n=1)
             fitting_task.scheduled_date = utc_to_local(start_time).date()
             # mark allotted time as busy
             for i in range(start_free_index, task_end_index):
@@ -121,6 +124,7 @@ def schedule_tasks(parse_tasks: t.List[Task]):
             # no task could be scheduled mark entire time as busy
             for i in range(start_free_index, next_busy_index):
                 busy_array[i] = True
+    t.close()
 
     error_mesage = ""
     for task in all_tasks_to_add_to_cal:
