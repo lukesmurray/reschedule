@@ -2,7 +2,7 @@ import re
 import typing as t
 from datetime import datetime
 
-from models import ParserContext, Task, TaskStatus
+from .models import ParserContext, Task, TaskStatus
 
 
 def _get_status_from_char(char: str) -> TaskStatus:
@@ -30,7 +30,7 @@ def _get_status_from_char(char: str) -> TaskStatus:
     elif char == "-":
         return TaskStatus.IN_PROGRESS
     else:
-        raise Exception(f"unknown status character {char}")
+        raise Exception("unknown status character {char}".format(char=char))
 
 
 # the parser
@@ -67,7 +67,7 @@ class TaskParser(object):
                 pass
             else:
                 raise Exception(
-                    f"no parsing handled for parse context {self.parser_context}"
+                    "no parsing handled for parse context {context}".format(context=self.parser_context)
                 )
 
     def _check_indent(self, indent: str, line_number: str):
@@ -80,13 +80,13 @@ class TaskParser(object):
                     self.indent_type = expected_indent_type
                 elif self.indent_type != expected_indent_type:
                     raise Exception(
-                        f"Prev indent character {self.indent_type} does not \
+                        "Prev indent character {indent_type} does not \
                             match indent character {expected_indent_type} on \
-                                line {line_number}"
+                                line {line_number}".format(indent_type=self.indent_type, expected_indent_type=expected_indent_type, line_number=line_number)
                     )
             else:
                 raise Exception(
-                    f"Please do not mix tabs and spaces in your task indent (line: {line_number})"
+                    "Please do not mix tabs and spaces in your task indent (line: {line_number})".format(line_number=line_number)
                 )
 
     def _parse_task(self, line: str, line_number: int):
@@ -95,8 +95,7 @@ class TaskParser(object):
         task_status_regex = r"(\s*)\- \[(.?)\]"
         task_status_match = re.match(task_status_regex, line)
         if not task_status_match:
-            print(line.__repr__())
-            raise Exception(f"(line {line_number}) todos must start with - [ ]")
+            raise Exception("(line {line_number}) todos must start with - [ ]".format(line_number=line_number))
         else:
             assert task_status_match is not None
             indent: str = task_status_match.group(1)
@@ -123,7 +122,7 @@ class TaskParser(object):
         for tag_match in tags:
             tag_dict[tag_match.group(1)] = tag_match.group(2)
         if "id" not in tag_dict:
-            raise Exception(f"(line {line_number}) task is missing an id")
+            raise Exception("(line {line_number}) task is missing an id".format(line_number=line_number))
         # add the id to the task
         new_task.id = tag_dict["id"]
         if new_task.id in self.task_ids:
@@ -147,7 +146,7 @@ class TaskParser(object):
             elif unit == "h":
                 est_in_minutes = 60 * int(measure)
             else:
-                raise Exception(f"unknown unit {unit}")
+                raise Exception("unknown unit {unit}".format(unit=unit))
 
         # add the estimate to the task
         new_task.estimate = est_in_minutes

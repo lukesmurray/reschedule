@@ -2,11 +2,11 @@ import math
 import sys
 import typing as t
 
-from calendar_api import CalendarAPI
-from config import chunk_size
-from models import TaskStatus
-from task_parser import Task
-from time_helpers import (
+from .calendar_api import CalendarAPI
+from .config import chunk_size
+from .models import TaskStatus
+from .task_parser import Task
+from .time_helpers import (
     end_index_to_datetime,
     now_utc,
     parse_rfc_33339,

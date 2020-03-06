@@ -1,3 +1,7 @@
 .vscode
 .mypy_cache
 .env
+.python-version
+*.egg-info
+token.pickle
+dist

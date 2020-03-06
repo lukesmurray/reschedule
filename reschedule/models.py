@@ -1,33 +1,34 @@
 """Contains models used throughout the codebase
 """
 import typing as t
+from typing_extensions import TypedDict
 from datetime import datetime, date
 from enum import Enum
 
 ETag = t.NewType("ETag", object)
 
 
-class EventCreator(t.TypedDict, total=False):
+class EventCreator(TypedDict, total=False):
     id: str
     email: str
     displayName: str
     self: bool
 
 
-class EventOrganizer(t.TypedDict, total=False):
+class EventOrganizer(TypedDict, total=False):
     id: str
     email: str
     displayName: str
     self: bool
 
 
-class EventTime(t.TypedDict, total=False):
+class EventTime(TypedDict, total=False):
     date: str
     dateTime: str
     timeZone: str
 
 
-class EventAttendee(t.TypedDict, total=False):
+class EventAttendee(TypedDict, total=False):
     id: str
     email: str
     displayName: str
@@ -40,7 +41,7 @@ class EventAttendee(t.TypedDict, total=False):
     additionalGuests: int
 
 
-class EventResource(t.TypedDict, total=False):
+class EventResource(TypedDict, total=False):
     kind: str
     etag: ETag
     id: str
@@ -80,7 +81,7 @@ class EventResource(t.TypedDict, total=False):
     attachments: t.Any
 
 
-class CalendarResource(t.TypedDict, total=False):
+class CalendarResource(TypedDict, total=False):
     """Representation of a calendar used in the Calendar's endpoint.
 
     See https://developers.google.com/calendar/v3/reference/calendars
@@ -96,12 +97,12 @@ class CalendarResource(t.TypedDict, total=False):
     conferenceProperties: t.Any
 
 
-class ListCalendarDefaultReminders(t.TypedDict, total=False):
+class ListCalendarDefaultReminders(TypedDict, total=False):
     method: str
     minutes: int
 
 
-class ListCalendar(t.TypedDict, total=False):
+class ListCalendar(TypedDict, total=False):
     kind: str
     etag: ETag
     id: str
@@ -123,7 +124,7 @@ class ListCalendar(t.TypedDict, total=False):
     conferenceProperties: t.Any
 
 
-class ListCalendarResponse(t.TypedDict, total=False):
+class ListCalendarResponse(TypedDict, total=False):
     kind: str
     etag: ETag
     nextPageToken: str
@@ -131,22 +132,22 @@ class ListCalendarResponse(t.TypedDict, total=False):
     items: t.List[ListCalendar]
 
 
-class FreeBusyBusyObject(t.TypedDict, total=False):
+class FreeBusyBusyObject(TypedDict, total=False):
     start: str
     end: str
 
 
-class FreeBusyErrorObject(t.TypedDict, total=False):
+class FreeBusyErrorObject(TypedDict, total=False):
     domain: str
     reason: str
 
 
-class FreeBusyCalendarValue(t.TypedDict, total=False):
+class FreeBusyCalendarValue(TypedDict, total=False):
     errors: t.List[FreeBusyErrorObject]
     busy: t.List[FreeBusyBusyObject]
 
 
-class FreeBusyResponse(t.TypedDict, total=False):
+class FreeBusyResponse(TypedDict, total=False):
     kind: str
     timeMin: str
     timeMax: str

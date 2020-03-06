@@ -10,22 +10,24 @@ classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Environment :: Console",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
+exclude = ["assets/*"]
+
 
 [tool.poetry.scripts]
 reschedule = 'reschedule.console:run'
 
 [tool.poetry.dependencies]
-python = "^3.4"
+python = "^3.5"
 google-auth-oauthlib = "^0.4.1"
 google-api-python-client = "^1.7.11"
 python-dateutil = "^2.8.1"
+typing-extensions = "^3.7.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

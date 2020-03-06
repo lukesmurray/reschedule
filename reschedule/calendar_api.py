@@ -8,18 +8,18 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from config import (
+from .config import (
     SCOPES,
     task_calendar_name,
 )
-from models import (
+from .models import (
     CalendarResource,
     EventResource,
     FreeBusyResponse,
     ListCalendar,
     ListCalendarResponse,
 )
-from time_helpers import (
+from .time_helpers import (
     beginning_of_day_utc,
     datetime_to_index,
     end_of_day_utc,
@@ -31,24 +31,32 @@ from time_helpers import (
 )
 
 
+def local_file_path(filename):
+    return os.path.abspath(
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), filename)
+    )
+
+
 def get_google_api_credentials():
     """Get credentials for accessing the google api."""
     credentials = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists("token.pickle"):
-        with open("token.pickle", "rb") as token:
+    if os.path.exists(local_file_path("token.pickle")):
+        with open(local_file_path("token.pickle"), "rb") as token:
             credentials = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not credentials or not credentials.valid:
         if credentials and credentials.expired and credentials.refresh_token:
             credentials.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(
+                local_file_path("credentials.json"), SCOPES,
+            )
             credentials = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open("token.pickle", "wb") as token:
+        with open(local_file_path("token.pickle"), "wb") as token:
             pickle.dump(credentials, token)
     return credentials
 

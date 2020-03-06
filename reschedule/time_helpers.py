@@ -1,6 +1,6 @@
 import typing as t
 from datetime import datetime, timedelta, timezone
-from config import chunk_size, work_start_time, work_end_time
+from .config import chunk_size, work_start_time, work_end_time
 from dateutil.tz import tzlocal
 
 SECONDS_PER_DAY = 86399
