@@ -1,4 +1,6 @@
-# TODO MD Scheduler
+# Reschedule
+
+[![PyPI version](https://badge.fury.io/py/reschedule.svg)](https://badge.fury.io/py/reschedule)
 
 ## Goal
 
