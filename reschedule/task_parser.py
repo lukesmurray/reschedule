@@ -39,38 +39,18 @@ def _get_status_from_char(char: str) -> TaskStatus:
 class TaskParser(object):
     def __init__(self):
         super().__init__()
-        self.parser_context: ParserContext = ParserContext.NONE
-        self.date_context: datetime.date
         self.tasks: t.List[Task] = []
         self.task_ids = set()
         self.indent_type = None
         self.indent_level_to_task: t.Dict[Task] = dict()
+        self.task_status_regex = re.compile(r"(\s*)\- \[(.?)\]")
 
     def _parse_line(self, line: str, line_number: int):
-        # ignore white space lines
-        if re.fullmatch(r"\s+", line):
-            pass
-        # context lines start with '//'
-        elif line.startswith("//"):
-            try:
-                new_date_context = datetime.strptime(
-                    line[2:].strip(), "%Y-%m-%d"
-                ).date()
-                self.date_context = new_date_context
-                self.parser_context = ParserContext.TASK
-            # TODO(lukemurray): fail if unknown context
-            except ValueError:
-                self.parser_context = ParserContext.NONE
-        else:
-            # parse non blank and non context lines based on the current context
-            if self.parser_context == ParserContext.TASK:
-                self._parse_task(line, line_number)
-            elif self.parser_context == ParserContext.NONE:
-                pass
-            else:
-                raise Exception(
-                    "no parsing handled for parse context {context}".format(context=self.parser_context)
-                )
+        # make sure the line starts with spaces followed by - [ ] there can be any character in the brackets
+        task_status_match = self.task_status_regex.match(line)
+        if task_status_match:
+            # ignore white space lines
+            self._parse_task(line, line_number, task_status_match)
 
     def _check_indent(self, indent: str, line_number: str):
         if len(indent) != 0:
@@ -91,19 +71,12 @@ class TaskParser(object):
                     "Please do not mix tabs and spaces in your task indent (line: {line_number})".format(line_number=line_number)
                 )
 
-    def _parse_task(self, line: str, line_number: int):
+    def _parse_task(self, line: str, line_number: int, task_status_match):
         new_task = Task()
-        # make sure the line starts with spaces followed by - [ ] there can be any character in the brackets
-        task_status_regex = r"(\s*)\- \[(.?)\]"
-        task_status_match = re.match(task_status_regex, line)
-        if not task_status_match:
-            raise Exception("(line {line_number}) todos must start with - [ ]".format(line_number=line_number))
-        else:
-            assert task_status_match is not None
-            indent: str = task_status_match.group(1)
-            self._check_indent(indent, line_number)
-            status_char = task_status_match.group(2)
-            new_task.status = _get_status_from_char(status_char)
+        indent: str = task_status_match.group(1)
+        self._check_indent(indent, line_number)
+        status_char = task_status_match.group(2)
+        new_task.status = _get_status_from_char(status_char)
 
         # add people to task
         person_regex = r"@(\w+)"
@@ -131,10 +104,6 @@ class TaskParser(object):
             raise Exception("duplicate ids")
         self.task_ids.add(new_task.id)
 
-        # TODO(lukemurray): maybe depreacted by the date tag
-        # add the date to the task
-        new_task.date = self.date_context
-
         # parse the estimate tag
         est = tag_dict.get("est", default_est)
         est_regex = r"(\d+)(\w+)"
@@ -155,7 +124,7 @@ class TaskParser(object):
 
         # description from removing status and tags
         new_task.description = (
-            re.sub(tag_regex, "", re.sub(task_status_regex, "", line))
+            re.sub(tag_regex, "", re.sub(self.task_status_regex, "", line))
             .replace("\n", "")
             .replace("\t", "")
             .strip()
@@ -176,6 +145,8 @@ class TaskParser(object):
                 all_indent_levels[semantic_indent_level - 1]
             ]
             parent_task.children.append(new_task)
+        for indent_level in all_indent_levels[semantic_indent_level + 1:]:
+            self.indent_level_to_task.pop(indent_level)
 
         # due date
         if "due" in tag_dict:

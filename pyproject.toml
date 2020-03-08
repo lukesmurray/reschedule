@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "reschedule"
-version = "0.1.2"
+version = "0.1.3"
 description = "Parser and scheduler for syncing a markdown(ish) todo list with google calendar."
 authors = ["Luke Murray <lukepigeonmail@gmail.com>"]
 license = "MIT"

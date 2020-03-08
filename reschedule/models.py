@@ -186,8 +186,6 @@ class Task(object):
         self.people: t.List[str] = []
         # the id of the task (used for syncing with calendar)
         self.id: str
-        # the context date of the task i.e. // year-mm-dd
-        self.date: datetime.date
         # the task description
         self.description: str
         # the time estimate of the task in minutes
