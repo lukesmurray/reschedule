@@ -5,3 +5,4 @@
 *.egg-info
 token.pickle
 dist
+.venv
