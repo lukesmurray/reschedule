@@ -19,7 +19,7 @@ exclude = ["assets/*"]
 
 
 [tool.poetry.scripts]
-reschedule = 'reschedule.console:run'
+reschedule = 'reschedule.cli:main'
 
 [tool.poetry.dependencies]
 python = "^3.6"
